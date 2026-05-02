@@ -5,28 +5,17 @@ const large_board = [20, 60];
 let grid_size = small_board; 
 let gameBoard;
 let gameCells;
+let gameCellArray = []
 let minesPlaced = false; //On first user click, we want to place the mines. This allows the user to have a safe first click.
 
 document.addEventListener("DOMContentLoaded", () => {    
     gameBoard = document.getElementById("minesweeper_grid");
-    gameCells = document.getElementsByClassName("ms_cell");
+    createBoard();
+
+    setCellClickHandlers();
 
     gameBoard.addEventListener("contextmenu", (event) => {
-        //Flag placement (right click) restricted to just the cells of the game board to prevent context menu showing.
-        let cell = event.target;
         event.preventDefault();
-        if(cell.classList.contains("ms_cell")){
-            placeFlag(cell);  
-        } 
-    });
-
-    gameBoard.addEventListener("click", (event) => {        
-        evaluateCell(event.target);
-            //May need to refactor this if the click event covers more than just the left mouse button.
-            if (!minesPlaced){
-            placeMines();
-        }
-
     });
     
     const sm_button = document.getElementById("ms_small");
@@ -52,17 +41,16 @@ document.addEventListener("DOMContentLoaded", () => {
     const restartButton = document.getElementById("restart_game");
     restartButton.addEventListener("click", () => {
         //Need to enhance this for user confirmation - need to avoid accidental clicks.
-        //reset basic board size to default.
+        //reset basic board size to default and reset mines placed flag.
         grid_size = small_board;
         createBoard();
-        minesPlaced = false;
     });
 
-    createBoard();
 });
 
 function createBoard(){
     let size = grid_size[0] 
+    minesPlaced = false;
     gameBoard.innerHTML = "";
     for(let c = 0; c < size; c++){
         for(let r = 0; r < size; r++){
@@ -75,6 +63,26 @@ function createBoard(){
     //Dynamically setting it removes the need for duplicated code and/or hardcoding size in multiple places.
     gameBoard.style.setProperty("grid-template-columns", `repeat(${size}, 1fr)`);
     gameBoard.style.setProperty("grid-template-rows", `repeat(${size}, 1fr)`);
+    setCellClickHandlers()
+}
+
+function setCellClickHandlers(){
+    gameCells = document.getElementsByClassName("ms_cell");
+    gameCellArray = Array.from(gameCells);
+    gameCellArray.forEach(cell => {
+        cell.addEventListener("contextmenu", (event) => {
+            let cellIndex = gameCellArray.indexOf(event.target);
+            placeFlag(cell);  
+        });
+
+        cell.addEventListener("click", (event) => {
+            let cellIndex = gameCellArray.indexOf(event.target);
+            if (!minesPlaced){
+                placeMines(cellIndex);
+            }
+            evaluateCell(cellIndex)
+        });
+    });
 }
 
 function placeFlag(cell){
@@ -85,13 +93,12 @@ function placeFlag(cell){
     cell.dataset.flag = "true";
 };
 
-function placeMines(){
+function placeMines(firstClickIndex){
     let number_of_mines = grid_size[1];
-    let cells = Array.from(gameCells);
     for (let m = 0; m < number_of_mines; m++){
-        let randomCellIndex = Math.floor(Math.random() * cells.length)
-        if(!cells[randomCellIndex].dataset.mine){
-            cells[randomCellIndex].dataset.mine = "true";
+        let randomCellIndex = Math.floor(Math.random() * gameCellArray.length)
+        if(!gameCellArray[randomCellIndex].dataset.mine && randomCellIndex !== firstClickIndex){
+            gameCellArray[randomCellIndex].dataset.mine = "true";
         }else{
             m--; //Reduce the mine counter, without this we may not get the required number of mines if a previously random cell has been selected again.
         }
@@ -99,26 +106,76 @@ function placeMines(){
     minesPlaced = true;
 };
 
-function evaluateCell(cell){
+function evaluateCell(cellIndex){
+    let cell = gameCellArray[cellIndex];
     if(cell.dataset.mine){
         //This will be game over...need to code for this properly.
         cell.dataset.mineclicked = "true";
         alert("Game Over! You hit a mine.");
         return;
     }
-    checkAdjacentCells(cell);
+    checkAdjacentCells(cellIndex);
 };
 
-function checkAdjacentCells(selectedCell){
-//Need to consider if the cell is on the edge of the board - do not want out of bounds errors.
+function checkAdjacentCells(cellIndex){
+    let minesFound = 0;
+    let cellsToCheck = obtainAdjacentCells(cellIndex);
+    cellsToCheck.forEach(cell =>{
+        if(gameCellArray[cell].dataset.mine === "true"){
+            minesFound++;
+        }
+    })
+    
+    if(minesFound > 0){
+        applyMineCount(cellIndex, minesFound);
+        return;
+    }
 
-    clearCell(selectedCell)
+    clearCell(cellIndex);
+
+    cellsToCheck.forEach(cell => {
+        checkAdjacentCells(cell);
+    });
+
 };
 
-function clearCell(cell){
+function obtainAdjacentCells(cellIndex){
+    //Need to consider if the cell is on the edge of the board - do not want out of bounds errors.
+    let size = grid_size[0];
+    let cellReference = getCellReference(cellIndex);
+    let adjacentCells = [];
+    let adjustmentArray = [[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, -1], [1, 0], [1, 1]];
+    adjustmentArray.forEach(adjustment => {
+        let adjCell = [cellReference[0] + adjustment[0], cellReference[1] + adjustment[1]];
+        
+        if(0 > adjCell[0] || adjCell[0] >= size || 0 > adjCell[1] || adjCell[1] >= size){
+            return;
+        }
+
+        let newCellIndex = cellIndex + (adjustment[0] * size + adjustment[1])
+        if(gameCellArray[newCellIndex].dataset.minefound === "true" || gameCellArray[newCellIndex].dataset.cleared === "true" || gameCellArray[newCellIndex].dataset.flag === "true"){
+            return;
+        }
+
+        adjacentCells.push(newCellIndex);
+    });
+
+    return adjacentCells;
+};
+
+function getCellReference(cellIndexToCheck){
+    //Take the array index and convert it to a row and column based on the size of the grid. I can then check if the cell would surround the clicked cell..
+    let size = grid_size[0];
+    let adjustedCell = [Math.floor(cellIndexToCheck / size), cellIndexToCheck % size];
+    return adjustedCell
+}
+
+function clearCell(cellIndex){
+    let cell = gameCellArray[cellIndex];
     cell.dataset.cleared = "true";
 };
 
-function applyMineCount(cell, count){
-
+function applyMineCount(cellIndex, count){
+    gameCellArray[cellIndex].textContent = count;
+    clearCell(cellIndex);
 };
