@@ -1,0 +1,24 @@
+:root{
+    --bg-main: #0b0e14;
+    --bg-navy: #1a2238;
+    --text-main: #f8f9fa;
+    --text-muted: #666666;
+    --action-main: #ff6600;
+    --highlights: #6b21a8;
+}
+
+*, *::before, *::after{
+    margin:0;
+    padding:0;
+    box-sizing: border-box;
+}
+
+body{
+    min-height: 100vh;
+    background-color: var(--bg-main);
+}
+
+nav{
+    min-height:10vh;
+    background-color: #6b21a8;
+}
