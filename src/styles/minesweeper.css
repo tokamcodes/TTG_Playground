@@ -1,8 +1,6 @@
 #minesweeper_grid{
     border: solid 2px var(--highlights);
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    grid-template-rows: repeat(5, 1fr);
     width:max-content;
     height:max-content;
     gap: 2px;
