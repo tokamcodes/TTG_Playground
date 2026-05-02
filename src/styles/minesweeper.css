@@ -1,0 +1,28 @@
+#minesweeper_grid{
+    border: solid 2px var(--highlights);
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(5, 1fr);
+    width:max-content;
+    height:max-content;
+    gap: 2px;
+    background-color: var(--bg-navy);
+    margin:2rem auto;
+
+    &>.ms_cell{
+        width: 60px;
+        height: 60px;
+        background-color: var(--text-muted);
+    }
+}
+
+#minesweeper_size, #minesweeper_footer{
+    display: flex;
+    gap: 1rem;
+    padding: 1rem 0 ;
+}
+
+/*Look to calculate the button size taking any spaceing into account, to stop fixed width and improve for different screen sizes*/
+#minesweeper_size>button{
+    width:200px;
+}

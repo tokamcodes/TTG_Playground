@@ -22,3 +22,33 @@ nav{
     min-height:10vh;
     background-color: #6b21a8;
 }
+
+h1, h2{
+    color: var(--text-main);
+    text-align: center;
+    margin: 1.5rem 0;
+}
+
+#gameboard{
+    display: grid;
+    grid-template-rows: auto auto minmax(max-content,80%) auto;
+    width: calc(100% - 2rem);
+    border: 2px solid var(--highlights);
+    margin:2rem auto;
+    padding: 0 2rem;
+}
+
+button{
+    margin: 0 auto;
+    padding: 0.5rem 1rem;
+    background-color: var(--action-main);
+    color: var(--text-main);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#restart_game{
+    margin-right:1rem;
+}
+
