@@ -24,3 +24,17 @@
 #minesweeper_size>button{
     width:200px;
 }
+
+/*Data attribute section*/
+
+#minesweeper_grid>.ms_cell[data-flag="true"]{
+    background-color: red;
+}
+
+#minesweeper_grid>.ms_cell[data-cleared="true"]{
+    background-color: white;
+}
+
+#minesweeper_grid>.ms_cell[data-mineclicked="true"]{
+    background-color: black;
+}
