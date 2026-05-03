@@ -8,6 +8,7 @@
     margin:2rem auto;
 
     &>.ms_cell{
+        display: grid;
         width: 60px;
         height: 60px;
         background-color: var(--text-muted);
@@ -27,14 +28,69 @@
 
 /*Data attribute section*/
 
+.ms_cell{
+    place-items: center;
+    font-size: 1.375rem;
+    font-weight: 800;;
+
+    &[data-mines]{
+        color: rgb(199, 4, 4);
+    }
+
+    &[data-mines="1"]{
+        color: rgb(7, 20, 207);
+    }
+
+    &[data-mines="2"]{
+        color: rgb(30, 133, 4);
+    }
+
+}
+
 #minesweeper_grid>.ms_cell[data-flag="true"]{
-    background-color: red;
+    position: relative;
+    aspect-ratio: 1;
+
+    &[data-flag="true"]{
+        /* The Flag Triangle */
+        &::before {
+            content: "";
+            position: absolute;
+            top: 20%;
+            left: 40%;
+            width: 40%;
+            height: 30%;
+            background-color: #ff0000;
+            clip-path: polygon(0 0, 100% 50%, 0 100%);
+        }
+
+    /* The Flag Pole */
+        &::after {
+            content: "";
+            position: absolute;
+            top: 20%;
+            left: 30%;
+            width: 10%;
+            height: 60%;
+            background-color: #333;
+        }
+    }
+
+
 }
 
 #minesweeper_grid>.ms_cell[data-cleared="true"]{
-    background-color: white;
+    background-color: color-mix(in srgb, var(--text-muted), var(--text-main) 60%);
 }
 
 #minesweeper_grid>.ms_cell[data-mineclicked="true"]{
-    background-color: black;
+    width: 100%;
+    aspect-ratio: 1;
+
+    background: 
+        radial-gradient(circle at 35% 35%, #555, #000 70%) center no-repeat,
+        repeating-conic-gradient(from 22.5deg, #000 0deg 5deg, transparent 5deg 45deg) center no-repeat,
+        color-mix(in srgb, var(--text-muted), var(--text-main) 60%);
+        
+    background-size: 50% 50%, 70% 70%, 100% 100%;
 }
