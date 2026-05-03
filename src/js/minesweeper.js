@@ -67,24 +67,49 @@ function createBoard(){
 function setCellClickHandlers(){
     gameCells = document.getElementsByClassName("ms_cell");
     gameCellArray = Array.from(gameCells);
-    console.log(gameCellArray);
+    
     gameCellArray.forEach(cell => {
-        cell.addEventListener("contextmenu", (event) => {
-            let cellIndex = gameCellArray.indexOf(event.target);
-            placeFlag(cell);  
-        });
+        cell.addEventListener("contextmenu", rightClickHandler); 
+        cell.addEventListener("click",leftClickHandler); 
 
-        cell.addEventListener("click", (event) => {
-            let cellIndex = gameCellArray.indexOf(event.target);
-            if (!minesPlaced){
-                placeMines(cellIndex);
-            }
-            evaluateCell(cellIndex)
-        });
     });
+};
+
+function rightClickHandler(event){
+    let cellIndex = gameCellArray.indexOf(event.target);
+    if(cellAlreadyWorked(cellIndex)) return;
+    placeFlag(cellIndex);  
 }
 
-function placeFlag(cell){
+function leftClickHandler(event){
+    let cellIndex = gameCellArray.indexOf(event.target);
+    if (!minesPlaced){
+        placeMines(cellIndex);
+    }
+    if(cellHasFlag(cellIndex)) return;
+    evaluateCell(cellIndex)
+}
+
+//If the cell has a flag, then do not allow evaluation of the cell.
+function cellHasFlag(cellIndex){
+    let cell = gameCellArray[cellIndex];
+    if(cell.dataset.flag){
+        return true;
+    }
+    return false;
+}
+
+//If the cell has already been checked, then do not allow further checks. specifically adding a flag.
+function cellAlreadyWorked(cellIndex){
+    let cell = gameCellArray[cellIndex];
+    if(cell.dataset.mineclicked || cell.dataset.mines || cell.dataset.cleared){
+        return true;
+    }
+    return false;
+}
+
+function placeFlag(cellIndex){
+    let cell = gameCellArray[cellIndex];
     if ('flag' in cell.dataset){
         delete cell.dataset.flag;
         return;
@@ -108,9 +133,7 @@ function placeMines(firstClickIndex){
 function evaluateCell(cellIndex){
     let cell = gameCellArray[cellIndex];
     if(cell.dataset.mine){
-        //This will be game over...need to code for this properly.
-        cell.dataset.mineclicked = "true";
-        alert("Game Over! You hit a mine.");
+        gameOverLoss(cellIndex);
         return;
     }
     checkAdjacentCells(cellIndex);
@@ -179,3 +202,27 @@ function applyMineCount(cellIndex, count){
     gameCellArray[cellIndex].dataset.mines = `${count}`;
     clearCell(cellIndex);
 };
+
+function gameOverLoss(cellIndex){
+    let currentCell = gameCellArray[cellIndex];
+    currentCell.dataset.mineclicked = "true";
+    revealMines();
+    removeClickHandlers();
+    alert("Game Over! You hit a mine.");
+}
+
+function revealMines(){
+        gameCellArray.filter(cell => cell.dataset.mine === "true").forEach(mineCell => {
+        mineCell.dataset.cleared = "true";
+        if (mineCell.dataset.flag){
+            delete mineCell.dataset.flag;
+        }
+    });
+}
+
+function removeClickHandlers(){
+    gameCellArray.forEach(cell => {
+        cell.removeEventListener("contextmenu", rightClickHandler)
+        cell.removeEventListener("click", leftClickHandler);
+    });
+}

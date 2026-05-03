@@ -75,22 +75,23 @@
             background-color: #333;
         }
     }
-
-
 }
 
 #minesweeper_grid>.ms_cell[data-cleared="true"]{
-    background-color: color-mix(in srgb, var(--text-muted), var(--text-main) 60%);
-}
-
-#minesweeper_grid>.ms_cell[data-mineclicked="true"]{
+    --cell-bg: color-mix(in srgb, var(--text-muted), var(--text-main) 60%);
+    background-color: var(--cell-bg);
     width: 100%;
     aspect-ratio: 1;
 
-    background: 
-        radial-gradient(circle at 35% 35%, #555, #000 70%) center no-repeat,
-        repeating-conic-gradient(from 22.5deg, #000 0deg 5deg, transparent 5deg 45deg) center no-repeat,
-        color-mix(in srgb, var(--text-muted), var(--text-main) 60%);
-        
-    background-size: 50% 50%, 70% 70%, 100% 100%;
+    &[data-mineclicked="true"]{
+        --cell-bg:rgb(228, 57, 57);
+    }
+
+    &[data-mine="true"]{
+        background: 
+            radial-gradient(circle at 35% 35%, #555, #000 70%) center no-repeat,
+            repeating-conic-gradient(from 22.5deg, #000 0deg 5deg, transparent 5deg 45deg) center no-repeat,
+            var(--cell-bg);        
+            background-size: 50% 50%, 70% 70%, 100% 100%;
+    }
 }
