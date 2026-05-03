@@ -1,10 +1,6 @@
-1. Fix overflow by resizing for smaller screens/bigger boards
-4. Add timer
-5. Add flag count display.
-
-
-
-
+1. Fix: Overflow by resizing for smaller screens/bigger boards
+6. Minesweeper.css >> refactor and standardise some colours.
+9. Fix: Count is not always picking up adjacent mines.
 
 Completed - PreventDoubleMarkingCells Branch
 2. DONE: Highlight cell with bomb when selected
@@ -12,3 +8,7 @@ Completed - PreventDoubleMarkingCells Branch
 8. DONE: On Mine reveal, remove any flags to prevent overlap.
 3. DONE: Reveal remaining bombs when one has been selected.
 7. DONE Remove click handlers when game is complete.
+
+Completed - Add timer and minecount branch.
+4. Add timer
+5. Add flag count display.

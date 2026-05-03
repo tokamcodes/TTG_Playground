@@ -21,9 +21,20 @@
     padding: 1rem 0 ;
 }
 
-/*Look to calculate the button size taking any spaceing into account, to stop fixed width and improve for different screen sizes*/
+/*Look to calculate the button size taking any spacing into account, to stop fixed width and improve for different screen sizes*/
 #minesweeper_size>button{
     width:200px;
+}
+
+#ms_flags_timer{
+    display:grid;
+    grid-template-rows: 1fr repeat();
+    
+    &>span{
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--action-main);
+    }
 }
 
 /*Data attribute section*/
@@ -64,7 +75,7 @@
             clip-path: polygon(0 0, 100% 50%, 0 100%);
         }
 
-    /* The Flag Pole */
+        /* The Flag Pole */
         &::after {
             content: "";
             position: absolute;

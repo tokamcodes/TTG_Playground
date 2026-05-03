@@ -7,6 +7,7 @@ let gameBoard;
 let gameCells;
 let gameCellArray = []
 let minesPlaced = false; //On first user click, we want to place the mines. This allows the user to have a safe first click.
+let ms_timer;
 
 document.addEventListener("DOMContentLoaded", () => {    
     gameBoard = document.getElementById("minesweeper_grid");
@@ -62,7 +63,35 @@ function createBoard(){
     gameBoard.style.setProperty("grid-template-columns", `repeat(${size}, 1fr)`);
     gameBoard.style.setProperty("grid-template-rows", `repeat(${size}, 1fr)`);
     setCellClickHandlers()
+
+    resetTime();
+    resetFlags();
 }
+
+function startTimer(){
+    let seconds = 0;
+    let timerDisplay = document.getElementById("timer");
+    timerDisplay.textContent = seconds; 
+    ms_timer = setInterval(() => {
+        seconds++;
+        timerDisplay.textContent = seconds;
+    }, 1000);
+}
+
+function resetTime(){
+    clearInterval(ms_timer);
+    document.getElementById("timer").textContent = "";
+}
+
+function resetFlags(){
+    document.getElementById("flagsRemaining").textContent = grid_size[1];
+}
+
+function adjustFlags(amount){
+    let currentFlags = parseInt(document.getElementById("flagsRemaining").textContent);
+    document.getElementById("flagsRemaining").textContent = currentFlags + amount;
+}
+
 
 function setCellClickHandlers(){
     gameCells = document.getElementsByClassName("ms_cell");
@@ -112,9 +141,11 @@ function placeFlag(cellIndex){
     let cell = gameCellArray[cellIndex];
     if ('flag' in cell.dataset){
         delete cell.dataset.flag;
+        adjustFlags(1);
         return;
     }
     cell.dataset.flag = "true";
+    adjustFlags(-1);
 };
 
 function placeMines(firstClickIndex){
@@ -128,6 +159,7 @@ function placeMines(firstClickIndex){
         }
     }
     minesPlaced = true;
+    startTimer();
 };
 
 function evaluateCell(cellIndex){
@@ -208,6 +240,7 @@ function gameOverLoss(cellIndex){
     currentCell.dataset.mineclicked = "true";
     revealMines();
     removeClickHandlers();
+    clearInterval(ms_timer);
     alert("Game Over! You hit a mine.");
 }
 
