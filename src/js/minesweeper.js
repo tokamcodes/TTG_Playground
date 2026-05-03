@@ -12,8 +12,6 @@ document.addEventListener("DOMContentLoaded", () => {
     gameBoard = document.getElementById("minesweeper_grid");
     createBoard();
 
-    setCellClickHandlers();
-
     gameBoard.addEventListener("contextmenu", (event) => {
         event.preventDefault();
     });
@@ -69,6 +67,7 @@ function createBoard(){
 function setCellClickHandlers(){
     gameCells = document.getElementsByClassName("ms_cell");
     gameCellArray = Array.from(gameCells);
+    console.log(gameCellArray);
     gameCellArray.forEach(cell => {
         cell.addEventListener("contextmenu", (event) => {
             let cellIndex = gameCellArray.indexOf(event.target);
@@ -177,5 +176,6 @@ function clearCell(cellIndex){
 
 function applyMineCount(cellIndex, count){
     gameCellArray[cellIndex].textContent = count;
+    gameCellArray[cellIndex].dataset.mines = `${count}`;
     clearCell(cellIndex);
 };

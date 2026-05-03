@@ -1,0 +1,6 @@
+1. Fix overflow by resizing for smaller screens/bigger boards
+2. Highlight cell with bomb when selected
+3. Reveal remaining bombs when one has been selected.
+4. Add timer
+5. Add flag count display.
+6. Fix the ability to place a mine on a flag and vice versa. This should not happen.
