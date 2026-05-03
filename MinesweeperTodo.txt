@@ -1,0 +1,14 @@
+1. Fix overflow by resizing for smaller screens/bigger boards
+4. Add timer
+5. Add flag count display.
+
+
+
+
+
+Completed - PreventDoubleMarkingCells Branch
+2. DONE: Highlight cell with bomb when selected
+6. DONE: Fix the ability to place a mine on a flag and vice versa. This should not happen.
+8. DONE: On Mine reveal, remove any flags to prevent overlap.
+3. DONE: Reveal remaining bombs when one has been selected.
+7. DONE Remove click handlers when game is complete.
