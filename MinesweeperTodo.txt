@@ -1,6 +1,8 @@
-1. Fix: Overflow by resizing for smaller screens/bigger boards
+
 6. Minesweeper.css >> refactor and standardise some colours.
-9. Fix: Count is not always picking up adjacent mines.
+10. How to right click on mobile device (right click event prefent default does not work in responsive dev tools view)
+13. Create win outcome - decide how to identify a win, and what to do with it.
+14. Fix up codebase t modularise the game - taking minesweeper out of the core code. 
 
 Completed - PreventDoubleMarkingCells Branch
 2. DONE: Highlight cell with bomb when selected
@@ -12,3 +14,9 @@ Completed - PreventDoubleMarkingCells Branch
 Completed - Add timer and minecount branch.
 4. Add timer
 5. Add flag count display.
+
+Completed - Fix OVerflow and sizing issues.
+1. Fix: Overflow by resizing for smaller screens/bigger boards
+12. Cell visuals need to scale for use on smaller screens - inadvertantly fixed in the above change.
+11. Button size and position when on smaller screens
+9. Fix: Count is not always picking up adjacent mines.

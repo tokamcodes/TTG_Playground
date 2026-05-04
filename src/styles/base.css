@@ -14,7 +14,6 @@
 }
 
 body{
-    min-height: 100vh;
     background-color: var(--bg-main);
 }
 
@@ -31,11 +30,10 @@ h1, h2{
 
 #gameboard{
     display: grid;
-    grid-template-rows: auto auto minmax(max-content,80%) auto;
-    width: calc(100% - 2rem);
+    grid-template-rows: auto auto max-content auto;
+    width: calc(100vmin - 2rem);
     border: 2px solid var(--highlights);
     margin:2rem auto;
-    padding: 0 2rem;
 }
 
 button{
@@ -48,7 +46,8 @@ button{
     cursor: pointer;
 }
 
-#restart_game{
-    margin-right:1rem;
-}
 
+#restart_container{
+    display:flex;
+    justify-content: center;
+}

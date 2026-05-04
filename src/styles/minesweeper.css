@@ -1,37 +1,45 @@
 #minesweeper_grid{
     border: solid 2px var(--highlights);
     display: grid;
-    width:max-content;
-    height:max-content;
+    width: min(80%, 50vh);
+    aspect-ratio: 1/1;
     gap: 2px;
     background-color: var(--bg-navy);
     margin:2rem auto;
 
     &>.ms_cell{
         display: grid;
-        width: 60px;
-        height: 60px;
+        min-width:0;
+        aspect-ratio: 1;
         background-color: var(--text-muted);
     }
 }
-
-#minesweeper_size, #minesweeper_footer{
-    display: flex;
-    gap: 1rem;
-    padding: 1rem 0 ;
+#gameboard{    
+    container-type: inline-size;
+    container-name: msBoardContainer;
 }
 
-/*Look to calculate the button size taking any spacing into account, to stop fixed width and improve for different screen sizes*/
-#minesweeper_size>button{
-    width:200px;
+#minesweeper_size, #minesweeper_footer{
+    display:flex;
+    flex-direction: column;
+    gap: 2rem;
+    padding: 1rem;
+    &>button{
+        margin:0 auto;
+    }
+}
+
+button{
+    width:80%;
 }
 
 #ms_flags_timer{
-    display:grid;
-    grid-template-rows: 1fr repeat();
-    
-    &>span{
-        font-size: 1.25rem;
+    display:flex;
+    flex-direction: column;
+    gap: 1rem;
+    width:80%;
+    margin: 0 auto;
+    &>span{        
         font-weight: 600;
         color: var(--action-main);
     }
@@ -105,4 +113,24 @@
             var(--cell-bg);        
             background-size: 50% 50%, 70% 70%, 100% 100%;
     }
+}
+
+@container msBoardContainer (min-width: 500px){
+    #minesweeper_size, #minesweeper_footer{
+        flex-direction: row;
+        justify-content: space-between;;
+        align-items: center;
+    }
+
+    #ms_flags_timer{
+        flex-direction: row;
+        flex: 0 0 60%;
+        justify-content: space-between;
+        &>span{
+            font-size: 1.5rem;
+            width:50%;
+
+        };
+    }
+
 }

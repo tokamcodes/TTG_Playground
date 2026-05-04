@@ -1,5 +1,5 @@
 #nav-container{
-    width:100vw;
+    width:100%;
     padding-right: calc(100vw - 100%);
     display: flex;
     justify-content: space-between;
@@ -50,6 +50,7 @@
 
 #nav-container{
     container-type: inline-size;
+    container-name: navContainer;
     padding: 1rem;
 }
 
@@ -69,10 +70,10 @@
     }
 
     #menu-toggle:checked ~ #nav-link-container {
-            display: flex;
-        }
+        display: flex;
+    }
 
-@container (min-width: 800px){
+@container navContainer (min-width: 800px){
     .menu-button{
         display:none;
     }

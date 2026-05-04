@@ -207,7 +207,7 @@ function obtainAdjacentCells(cellIndex){
         }
 
         let newCellIndex = cellIndex + (adjustment[0] * size + adjustment[1])
-        if(gameCellArray[newCellIndex].dataset.minefound === "true" || gameCellArray[newCellIndex].dataset.cleared === "true" || gameCellArray[newCellIndex].dataset.flag === "true"){
+        if(gameCellArray[newCellIndex].dataset.cleared === "true"){
             return;
         }
 
