@@ -14,24 +14,6 @@
         background-color: var(--text-muted);
     }
 }
-#gameboard{    
-    container-type: inline-size;
-    container-name: msBoardContainer;
-}
-
-#minesweeper_size, #minesweeper_footer{
-    display:flex;
-    flex-direction: column;
-    gap: 2rem;
-    padding: 1rem;
-    &>button{
-        margin:0 auto;
-    }
-}
-
-button{
-    width:80%;
-}
 
 #ms_flags_timer{
     display:flex;
@@ -115,12 +97,7 @@ button{
     }
 }
 
-@container msBoardContainer (min-width: 500px){
-    #minesweeper_size, #minesweeper_footer{
-        flex-direction: row;
-        justify-content: space-between;;
-        align-items: center;
-    }
+@container BoardContainer (min-width: 500px){
 
     #ms_flags_timer{
         flex-direction: row;
@@ -129,7 +106,6 @@ button{
         &>span{
             font-size: 1.5rem;
             width:50%;
-
         };
     }
 

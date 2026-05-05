@@ -37,6 +37,7 @@ h1, h2{
 }
 
 button{
+    width:80%;
     margin: 0 auto;
     padding: 0.5rem 1rem;
     background-color: var(--action-main);
@@ -46,8 +47,7 @@ button{
     cursor: pointer;
 }
 
-
-#restart_container{
-    display:flex;
-    justify-content: center;
+#gameboard{    
+    container-type: inline-size;
+    container-name: BoardContainer;
 }

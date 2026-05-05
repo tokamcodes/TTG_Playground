@@ -1,86 +1,26 @@
 const small_board = [9, 10]; //default grid size with 9 rows/cols and 10 mines.
 const medium_board = [15, 40];
 const large_board = [20, 60];
+const gameBoardName = "minesweeper_grid"
+const cellValueArray = [0,0,0,0] // 0/1 booleans - worked//flag/has mine/ mine clicked
 
 let grid_size = small_board; 
-let gameBoard;
 let gameCells;
 let gameCellArray = []
 let minesPlaced = false; //On first user click, we want to place the mines. This allows the user to have a safe first click.
-let ms_timer;
+let game_timer;
 
 document.addEventListener("DOMContentLoaded", () => {    
-    gameBoard = document.getElementById("minesweeper_grid");
-    createBoard();
-
-    gameBoard.addEventListener("contextmenu", (event) => {
-        event.preventDefault();
-    });
-    
-    const sm_button = document.getElementById("ms_small");
-    const md_button = document.getElementById("ms_medium");
-    const lg_button = document.getElementById("ms_large");
-
-    sm_button.addEventListener("click", () => {
-        grid_size = small_board;
-        createBoard();
-    });
-
-    md_button.addEventListener("click", () => {
-        grid_size = medium_board;
-        createBoard();
-    });             
-
-    lg_button.addEventListener("click", () => {
-        grid_size = large_board;
-        createBoard();
-    });
-
-    
-    const restartButton = document.getElementById("restart_game");
-    restartButton.addEventListener("click", () => {
-        //Need to enhance this for user confirmation - need to avoid accidental clicks.
-        //reset basic board size to default and reset mines placed flag.
-        grid_size = small_board;
-        createBoard();
-    });
-
+    setupGameBoard();
 });
 
-function createBoard(){
-    let size = grid_size[0] 
+function setupGameBoard(){
     minesPlaced = false;
-    gameBoard.innerHTML = "";
-    for(let c = 0; c < size; c++){
-        for(let r = 0; r < size; r++){
-            let cell = document.createElement("div");
-            cell.classList.add("ms_cell");
-            gameBoard.appendChild(cell);
-        }
-    }
-    //Set the css grid template properties based on the size of the board that the user has selected.
-    //Dynamically setting it removes the need for duplicated code and/or hardcoding size in multiple places.
-    gameBoard.style.setProperty("grid-template-columns", `repeat(${size}, 1fr)`);
-    gameBoard.style.setProperty("grid-template-rows", `repeat(${size}, 1fr)`);
-    setCellClickHandlers()
-
+    createBoard(grid_size[0],grid_size[0]);
+    showBoard(gameBoardName, "ms_cell");
+    setCellClickHandlers();
     resetTime();
     resetFlags();
-}
-
-function startTimer(){
-    let seconds = 0;
-    let timerDisplay = document.getElementById("timer");
-    timerDisplay.textContent = seconds; 
-    ms_timer = setInterval(() => {
-        seconds++;
-        timerDisplay.textContent = seconds;
-    }, 1000);
-}
-
-function resetTime(){
-    clearInterval(ms_timer);
-    document.getElementById("timer").textContent = "";
 }
 
 function resetFlags(){
@@ -92,22 +32,21 @@ function adjustFlags(amount){
     document.getElementById("flagsRemaining").textContent = currentFlags + amount;
 }
 
-
+//Look to simplyfy the next 3 handlers and move into gridgames.js
 function setCellClickHandlers(){
-    gameCells = document.getElementsByClassName("ms_cell");
-    gameCellArray = Array.from(gameCells);
-    
-    gameCellArray.forEach(cell => {
-        cell.addEventListener("contextmenu", rightClickHandler); 
-        cell.addEventListener("click",leftClickHandler); 
-
+    boardArray.forEach((row,r) => {
+        row.forEach((_, c) => {
+            const cell = document.querySelector(`[data-row="${r}"][data-col="${c}"]`)
+            cell.addEventListener("contextmenu", rightClickHandler); 
+            cell.addEventListener("click", leftClickHandler); 
+        });
     });
 };
 
 function rightClickHandler(event){
-    let cellIndex = gameCellArray.indexOf(event.target);
-    if(cellAlreadyWorked(cellIndex)) return;
-    placeFlag(cellIndex);  
+    let cellCoords = getCoordinates(event.target);
+    if(cellAlreadyWorked(cellCoords)) return;
+    placeFlag(cellCoords);  
 }
 
 function leftClickHandler(event){
@@ -240,7 +179,7 @@ function gameOverLoss(cellIndex){
     currentCell.dataset.mineclicked = "true";
     revealMines();
     removeClickHandlers();
-    clearInterval(ms_timer);
+    clearInterval(game_timer);
     alert("Game Over! You hit a mine.");
 }
 

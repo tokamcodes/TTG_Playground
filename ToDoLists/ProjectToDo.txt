@@ -1,0 +1,2 @@
+1. Seperate Minesweeper code from base code.
+2. Head element to include things like CSP

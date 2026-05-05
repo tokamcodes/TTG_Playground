@@ -1,0 +1,14 @@
+
+4. Style snake using data-attributes within css
+5. Create fruits and style in css - consider occupied spaces from snake
+6. Snake movement - death on hitting the walls and itself - what keys/prevent page moving
+7. Sanke eating fruit - will grow and increase score
+7. Snake movement update - allow to go through walls to the opposite side
+8. 
+
+Completed - Snake The Begining
+**Started refactoring of ms js and css to have shared elements available for other grid based games.
+2. Utilise game board sizes used in Minesweeper by refactoring css and js
+1. Setup game board with various sizes available.
+3. Footer will be Score and reset button
+**Commit before going too far - ready to try partialising game files now for import into index.html. Main issue forseen will be the js files. Believe i may need to async import these.
