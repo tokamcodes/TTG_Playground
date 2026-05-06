@@ -1,23 +1,21 @@
-const small_board = [9, 10]; //default grid size with 9 rows/cols and 10 mines.
-const medium_board = [15, 40];
-const large_board = [20, 60];
-const gameBoardName = "minesweeper_grid"
+import {setupCoreHandlers, generateBoardArray, showBoard , getCoordinates, startTimer, clearTimer, resetTime, isSameCoord} from "./gridgames.js";
+const boards = [[9, 10],[15, 40], [20, 60]]
 const cellValueArray = [0,0,0,0] // 0/1 booleans - worked//flag/has mine/ mine clicked
 
-let grid_size = small_board; 
-let gameCells;
+let grid_size = boards[0] //default to small board; 
 let gameCellArray = []
 let minesPlaced = false; //On first user click, we want to place the mines. This allows the user to have a safe first click.
-let game_timer;
 
-document.addEventListener("DOMContentLoaded", () => {    
-    setupGameBoard();
-});
+export function init(){
+    setupCoreHandlers(setupGameBoard);
+    setupGameBoard(0);
+}
 
-function setupGameBoard(){
+function setupGameBoard(boardSize){
+    grid_size = boards[boardSize]
     minesPlaced = false;
-    createBoard(grid_size[0],grid_size[0]);
-    showBoard(gameBoardName, "ms_cell");
+    gameCellArray = generateBoardArray(grid_size[0],grid_size[0]);
+    showBoard(gameCellArray, "ms_cell");
     setCellClickHandlers();
     resetTime();
     resetFlags();
@@ -32,15 +30,15 @@ function adjustFlags(amount){
     document.getElementById("flagsRemaining").textContent = currentFlags + amount;
 }
 
-//Look to simplyfy the next 3 handlers and move into gridgames.js
+//Look to simplyfy the next handler and move into gridgames.js by passing in array of event type and function name to call.
 function setCellClickHandlers(){
-    boardArray.forEach((row,r) => {
-        row.forEach((_, c) => {
-            const cell = document.querySelector(`[data-row="${r}"][data-col="${c}"]`)
-            cell.addEventListener("contextmenu", rightClickHandler); 
-            cell.addEventListener("click", leftClickHandler); 
-        });
-    });
+    for(const [r, row] of gameCellArray.entries()){
+        for (const [c, col] of row.entries()){
+                const cell = document.querySelector(`[data-row="${r}"][data-col="${c}"]`)
+                cell.addEventListener("contextmenu", rightClickHandler); 
+                cell.addEventListener("click", leftClickHandler); 
+        };
+    };
 };
 
 function rightClickHandler(event){
@@ -50,17 +48,17 @@ function rightClickHandler(event){
 }
 
 function leftClickHandler(event){
-    let cellIndex = gameCellArray.indexOf(event.target);
+    let cellCoords = [Number(this.dataset.row), Number(this.dataset.col)];
     if (!minesPlaced){
-        placeMines(cellIndex);
+        placeMines(cellCoords);
     }
-    if(cellHasFlag(cellIndex)) return;
-    evaluateCell(cellIndex)
+    if(cellHasFlag(cellCoords)) return;
+    evaluateCell(cellCoords)
 }
 
 //If the cell has a flag, then do not allow evaluation of the cell.
-function cellHasFlag(cellIndex){
-    let cell = gameCellArray[cellIndex];
+function cellHasFlag(cellCoords){
+    let cell = getElementFromRCDataAttribute(cellCoords);
     if(cell.dataset.flag){
         return true;
     }
@@ -68,16 +66,16 @@ function cellHasFlag(cellIndex){
 }
 
 //If the cell has already been checked, then do not allow further checks. specifically adding a flag.
-function cellAlreadyWorked(cellIndex){
-    let cell = gameCellArray[cellIndex];
+function cellAlreadyWorked(cellCoords){
+    let cell = getElementFromRCDataAttribute(cellCoords);
     if(cell.dataset.mineclicked || cell.dataset.mines || cell.dataset.cleared){
         return true;
     }
     return false;
 }
 
-function placeFlag(cellIndex){
-    let cell = gameCellArray[cellIndex];
+function placeFlag(cellCoords){
+    let cell = getElementFromRCDataAttribute(cellCoords);
     if ('flag' in cell.dataset){
         delete cell.dataset.flag;
         adjustFlags(1);
@@ -87,12 +85,13 @@ function placeFlag(cellIndex){
     adjustFlags(-1);
 };
 
-function placeMines(firstClickIndex){
+function placeMines(firstClickCoords){
     let number_of_mines = grid_size[1];
     for (let m = 0; m < number_of_mines; m++){
-        let randomCellIndex = Math.floor(Math.random() * gameCellArray.length)
-        if(!gameCellArray[randomCellIndex].dataset.mine && randomCellIndex !== firstClickIndex){
-            gameCellArray[randomCellIndex].dataset.mine = "true";
+        let randomCellCoords = getRandomArrayItem();
+        let element = getElementFromRCDataAttribute(randomCellCoords);
+        if(!element.dataset.mine && !isSameCoord(firstClickCoords,randomCellCoords)){
+            element.dataset.mine = "true";
         }else{
             m--; //Reduce the mine counter, without this we may not get the required number of mines if a previously random cell has been selected again.
         }
@@ -101,100 +100,111 @@ function placeMines(firstClickIndex){
     startTimer();
 };
 
-function evaluateCell(cellIndex){
-    let cell = gameCellArray[cellIndex];
+
+function evaluateCell(cellCoords){
+    let cell = getElementFromRCDataAttribute(cellCoords);
     if(cell.dataset.mine){
-        gameOverLoss(cellIndex);
+        gameOverLoss(cellCoords);
         return;
     }
-    checkAdjacentCells(cellIndex);
+    checkAdjacentCells(cellCoords);
 };
 
-function checkAdjacentCells(cellIndex){
+function checkAdjacentCells(cellCoords){
     let minesFound = 0;
-    let cellsToCheck = obtainAdjacentCells(cellIndex);
+    let cellsToCheck = obtainAdjacentCells(cellCoords);
     cellsToCheck.forEach(cell =>{
-        if(gameCellArray[cell].dataset.mine === "true"){
+        if(cell.dataset.mine === "true"){
             minesFound++;
         }
     })
     
     if(minesFound > 0){
-        applyMineCount(cellIndex, minesFound);
+        applyMineCount(cellCoords, minesFound);
         return;
     }
 
-    clearCell(cellIndex);
+    clearCell(cellCoords);
 
     cellsToCheck.forEach(cell => {
-        checkAdjacentCells(cell);
+        checkAdjacentCells(getCoordinates(cell));
     });
 
 };
 
-function obtainAdjacentCells(cellIndex){
-    //Need to consider if the cell is on the edge of the board - do not want out of bounds errors.
-    let size = grid_size[0];
-    let cellReference = getCellReference(cellIndex);
+function obtainAdjacentCells(cellCoords){
+    //Need to consider if the adjust cell coords exist in the array - do not want out of bounds errors.
     let adjacentCells = [];
     let adjustmentArray = [[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, -1], [1, 0], [1, 1]];
     adjustmentArray.forEach(adjustment => {
-        let adjCell = [cellReference[0] + adjustment[0], cellReference[1] + adjustment[1]];
+        let adjCell = [cellCoords[0] + adjustment[0], cellCoords[1] + adjustment[1]];
         
-        if(0 > adjCell[0] || adjCell[0] >= size || 0 > adjCell[1] || adjCell[1] >= size){
+        if(!isValidCoords(adjCell)) return;
+
+        let nextCell = getElementFromRCDataAttribute(adjCell);
+        if(nextCell.dataset.cleared === "true"){
             return;
         }
 
-        let newCellIndex = cellIndex + (adjustment[0] * size + adjustment[1])
-        if(gameCellArray[newCellIndex].dataset.cleared === "true"){
-            return;
-        }
-
-        adjacentCells.push(newCellIndex);
+        adjacentCells.push(nextCell);
     });
 
     return adjacentCells;
 };
 
-function getCellReference(cellIndexToCheck){
-    //Take the array index and convert it to a row and column based on the size of the grid. I can then check if the cell would surround the clicked cell..
-    let size = grid_size[0];
-    let adjustedCell = [Math.floor(cellIndexToCheck / size), cellIndexToCheck % size];
-    return adjustedCell
-}
-
-function clearCell(cellIndex){
-    let cell = gameCellArray[cellIndex];
+function clearCell(cellCoords){
+    let cell = getElementFromRCDataAttribute(cellCoords);
     cell.dataset.cleared = "true";
 };
 
-function applyMineCount(cellIndex, count){
-    gameCellArray[cellIndex].textContent = count;
-    gameCellArray[cellIndex].dataset.mines = `${count}`;
-    clearCell(cellIndex);
+function applyMineCount(cellCoords, count){
+    const cell = getElementFromRCDataAttribute(cellCoords);
+    cell.textContent = count;
+    cell.dataset.mines = `${count}`;
+    clearCell(cellCoords);
 };
 
-function gameOverLoss(cellIndex){
-    let currentCell = gameCellArray[cellIndex];
+function gameOverLoss(cellCoords){
+    let currentCell = getElementFromRCDataAttribute(cellCoords);
     currentCell.dataset.mineclicked = "true";
     revealMines();
     removeClickHandlers();
-    clearInterval(game_timer);
+    clearTimer();
     alert("Game Over! You hit a mine.");
 }
 
 function revealMines(){
-        gameCellArray.filter(cell => cell.dataset.mine === "true").forEach(mineCell => {
-        mineCell.dataset.cleared = "true";
-        if (mineCell.dataset.flag){
-            delete mineCell.dataset.flag;
+    const mines = document.querySelectorAll(`[data-mine]`).forEach( mine => {
+        mine.dataset.cleared = "true";
+        if (mine.dataset.flag){
+            delete mine.dataset.flag;
         }
     });
 }
 
-function removeClickHandlers(){
-    gameCellArray.forEach(cell => {
-        cell.removeEventListener("contextmenu", rightClickHandler)
-        cell.removeEventListener("click", leftClickHandler);
-    });
+// #region potentialforcommonjs
+function getRandomArrayItem(){
+    const row = Math.floor(Math.random() * gameCellArray.length);
+    const col =  Math.floor(Math.random() * gameCellArray[row].length);
+    return [row, col]
 }
+
+function getElementFromRCDataAttribute([row,col]){
+    //Using a row col array, obtain the html element base on the data attributes associated with the row and col.
+    return document.querySelector(`[data-row="${row}"][data-col="${col}"]`)
+}
+
+function isValidCoords(coords){
+    return gameCellArray[coords[0]] !== undefined && gameCellArray[coords[0],coords[1]] !== undefined;
+}
+
+
+
+function removeClickHandlers(){
+    const handlers = document.querySelectorAll(`[data-row][data-col]`).forEach(element => {
+        element.removeEventListener("contextmenu", rightClickHandler)
+        element.removeEventListener("click", leftClickHandler);
+    })
+}
+
+// #endregion

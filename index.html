@@ -7,12 +7,7 @@
     <title>TTG Playground</title>
     <link rel="stylesheet" href="/src/styles/base.css">
     <link rel="stylesheet" href="/src/styles/nav.css">
-    <link rel="stylesheet" href="/src/styles/minesweeper.css">
-    <link rel="stylesheet" href="/src/styles/gridgames.css">
-    <script src="/src/js/base.js"></script>
-    <script src="/src/js/gridgames.js"></script>
-    <script src="/src/js/minesweeper.js"></script>
-    <script src="/src/js/snake.js"></script>
+    <script type="module" src="/src/js/base.js"></script>
 </head>
 
 <body>
@@ -26,8 +21,8 @@
             <label for="menu-toggle" class="menu-button">Menu</label>
 
             <ul id="nav-link-container">
-                <li><a href="">Game 1</a></li>
-                <li><a href="">Game 2</a></li>
+                <li><a href="" data-gameboard="Minesweeper">Minesweeper</a></li>
+                <li><a href="" data-gameboard="Snake">Snake</a></li>
                 <li><a href="">Game 3</a></li>
                 <li><a href="">Game 4</a></li>
             </ul>
@@ -35,43 +30,6 @@
     </nav>
 
     <div id="gameboard">
-        <h1>Minesweeper</h1>
-        <div id="gridSizeGroup">
-            <button id="sm_grid">Small</button>
-            <button id="md_grid">Medium</button>
-            <button id="lg_grid">Large</button>
-        </div>
-
-        <div id="minesweeper_grid">
-
-        </div>
-        <div id="gridGameFooter">
-            <div id="ms_flags_timer">
-                <span>Flags Remaining: <span id="flagsRemaining"></span></span>
-                <span>Time: <span id="timer"></span></span>
-            </div>
-            <button id="restart_game" type="button">Restart</button>
-        </div>
-    </div>
-
-    <div id="gameboard">
-        <h1>Snake</h1>
-        <div id="gridSizeGroup">
-            <button id="sm_grid">Small</button>
-            <button id="md_grid">Medium</button>
-            <button id="lg_grid">Large</button>
-        </div>
-
-        <div id="game_grid">
-
-        </div>
-
-        <div id="gridGameFooter">
-            <div id="ms_flags_timer">
-                <span>Score: <span id="timer"></span></span>
-            </div>
-            <button id="restart_game" type="button">Restart</button>
-        </div>
 
     </div>
 

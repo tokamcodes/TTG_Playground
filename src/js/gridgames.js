@@ -1,60 +1,50 @@
-// const small_board = []; //default grid size for a game
-// const medium_board = [];
-// const large_board = [];
-let boardArray = [];
+let game_timer;
+let gameBoard;
 
-document.addEventListener("DOMContentLoaded", () => {
+
+//function from partial is required as a param. Module js file has no access to call function directly.
+export function setupCoreHandlers(callback){
     const sm_button = document.getElementById("sm_grid");
     const md_button = document.getElementById("md_grid");
     const lg_button = document.getElementById("lg_grid");
-    const gameBoard =document.getElementById(gameBoardName).addEventListener("contextmenu", (event) => {
+    gameBoard = document.querySelector(`[data-gamegrid]`)
+    
+    gameBoard.addEventListener("contextmenu", (event) => {
         event.preventDefault();
     });
 
-    sm_button.addEventListener("click", () => {
-        grid_size = small_board;
-        setupGameBoard();
-    });
+    //grid games have small (0) medium (1) or large (2) available. these are array indexes for the relevant js file.
+    sm_button.onclick = () => {
+        callback(0);
+    };
 
-    md_button.addEventListener("click", () => {
-        grid_size = medium_board;
-        setupGameBoard();
-    });             
+    md_button.onclick = () => {
+        callback(1);
+    };             
 
-    lg_button.addEventListener("click", () => {
-        grid_size = large_board;
-        setupGameBoard();
-    });
+    lg_button.onclick = () => {
+        callback(2);
+    };
             
     const restartButton = document.getElementById("restart_game");
-    restartButton.addEventListener("click", () => {
+    restartButton.onclick = () => {
         //Need to enhance this for user confirmation - need to avoid accidental clicks.
         //reset basic board size to default and reset mines placed flag.
-        grid_size = small_board;
-        setupGameBoard();
-    });
-})
-
-
-// #region Setup board section
-
-function createBoard(rows,cols){
-    let gameGrid = document.getElementById("game_grid") 
-    boardArray = [];
-    /*Updating to array.from - in minesweeper, initially created the array with a nest for loop. */
-    generateBoardArray(rows,cols);
+        callback(0);
+    };
 }
 
-function generateBoardArray(rows,cols){
-    boardArray = Array.from({length: rows}, (_, r) => 
-        Array.from({length: cols}, (_, c) => (cellValueArray)
+// #region Setup board section
+export function generateBoardArray(rows,cols){
+    
+    let gameGrid = document.getElementById("game_grid") 
+    return Array.from({length: rows}, (_, r) => 
+        Array.from({length: cols}, (_, c) => {}
     ));
-console.log(boardArray);
 };
 
-function showBoard(gameBoardName, styleName){
-    let board = document.getElementById(gameBoardName);
-    board.innerHTML= "";
+export function showBoard(boardArray, styleName){
+    gameBoard.innerHTML= "";
 
     boardArray.forEach((row, r) =>{
         // _ used here as i do not need to do anything other than grab the index.
@@ -65,28 +55,28 @@ function showBoard(gameBoardName, styleName){
             cellToDisplay.dataset.row = r;
             cellToDisplay.dataset.col = c;
             cellToDisplay.classList.add(styleName);
-            board.appendChild(cellToDisplay);
+            gameBoard.appendChild(cellToDisplay);
         })
     })
 
     //     //Set the css grid template properties based on the size of the board that the user has selected.
     //     //Dynamically setting it removes the need for duplicated code and/or hardcoding size in multiple places.
 
-    board.style.setProperty("grid-template-columns", `repeat(${boardArray[0].length}, 1fr)`);
-    board.style.setProperty("grid-template-rows", `repeat(${boardArray.length}, 1fr)`);
+    gameBoard.style.setProperty("grid-template-columns", `repeat(${boardArray[0].length}, 1fr)`);
+    gameBoard.style.setProperty("grid-template-rows", `repeat(${boardArray.length}, 1fr)`);
     
 }
 // #endregion
 
-// 'region Grid Array Section
-    function getCoordinates(cell){
+// #region Grid Array Section
+    export function getCoordinates(cell){
         //should add in error handling in case this fails...need EH in more places too
-        return [cell.dataset.row,cell.dataset.col];
+        return [Number(cell.dataset.row),Number(cell.dataset.col)];
     }
 // #endregion
 
 // #region Timer Section
-function startTimer(){
+export function startTimer(){
     let seconds = 0;
     let timerDisplay = document.getElementById("timer");
     timerDisplay.textContent = seconds; 
@@ -96,8 +86,16 @@ function startTimer(){
     }, 1000);
 }
 
-function resetTime(){
+export function clearTimer(){
     clearInterval(game_timer);
+}
+
+export function resetTime(){
+    clearTimer();
     document.getElementById("timer").textContent = "";
+}
+
+export function isSameCoord([r1, c1], [r2, c2]){
+    return r1 === r2 && c1 === c2;
 }
 // #endregion
