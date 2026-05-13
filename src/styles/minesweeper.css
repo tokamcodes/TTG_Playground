@@ -1,4 +1,4 @@
-#minesweeper_grid{
+#game_grid{
     border: solid 2px var(--highlights);
     display: grid;
     width: min(80%, 50vh);
@@ -49,7 +49,7 @@
 
 }
 
-#minesweeper_grid>.ms_cell[data-flag="true"]{
+#game_grid>.ms_cell[data-flag="true"]{
     position: relative;
     aspect-ratio: 1;
 
@@ -79,7 +79,7 @@
     }
 }
 
-#minesweeper_grid>.ms_cell[data-cleared="true"]{
+#game_grid>.ms_cell[data-cleared="true"]{
     --cell-bg: color-mix(in srgb, var(--text-muted), var(--text-main) 60%);
     background-color: var(--cell-bg);
     width: 100%;

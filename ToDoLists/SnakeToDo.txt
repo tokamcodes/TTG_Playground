@@ -1,10 +1,8 @@
 
-4. Style snake using data-attributes within css
-5. Create fruits and style in css - consider occupied spaces from snake
-6. Snake movement - death on hitting the walls and itself - what keys/prevent page moving
-7. Sanke eating fruit - will grow and increase score
-7. Snake movement update - allow to go through walls to the opposite side
 
+7. Snake movement update - allow to go through walls to the opposite side
+9. Removal of fruit once eaten
+10. prevent multiple fruits spawning at one time
 
 Completed - Snake The Begining
 **Started refactoring of ms js and css to have shared elements available for other grid based games.
@@ -13,3 +11,11 @@ Completed - Snake The Begining
 3. Footer will be Score and reset button
 **Commit before going too far - ready to try partialising game files now for import into index.html. Main issue forseen will be the js files. Believe i may need to async import these.
 8. Partialised games files now, js files are loaded as modules with a common js file made for gridgames.
+
+Completed - Snake Initial Board Setup
+Initial boards js now setup and loading.
+css scaffolding started (styles need work later)
+4. Style snake using data-attributes within css
+5. Create fruits and style in css - consider occupied spaces from snake
+6. Snake movement - death on hitting the walls and itself - what keys/prevent page moving
+7. Sanke eating fruit - will grow and increase score

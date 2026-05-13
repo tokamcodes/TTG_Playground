@@ -69,10 +69,30 @@ export function showBoard(boardArray, styleName){
 // #endregion
 
 // #region Grid Array Section
+    export function getRandomArrayItem(gameCellArray){
+        const row = Math.floor(Math.random() * gameCellArray.length);
+        const col =  Math.floor(Math.random() * gameCellArray[row].length);
+        return [row, col]
+    }
+
+    export function getElementFromRCDataAttribute([row,col]){
+    //Using a row col array, obtain the html element base on the data attributes associated with the row and col.
+    return document.querySelector(`[data-row="${row}"][data-col="${col}"]`)
+}
+
     export function getCoordinates(cell){
         //should add in error handling in case this fails...need EH in more places too
         return [Number(cell.dataset.row),Number(cell.dataset.col)];
     }
+
+    export function getAdjustedCoords(currentCoords, adjustment){
+        return [currentCoords[0] + adjustment[0], currentCoords[1] + adjustment[1]];
+    }
+
+    export function isValidCoords(boardArray, coords){
+        return boardArray[coords[0]] !== undefined && boardArray[coords[0],coords[1]] !== undefined;
+    }
+
 // #endregion
 
 // #region Timer Section

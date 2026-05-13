@@ -1,4 +1,5 @@
-import {setupCoreHandlers, generateBoardArray, showBoard , getCoordinates, startTimer, clearTimer, resetTime, isSameCoord} from "./gridgames.js";
+import {setupCoreHandlers, generateBoardArray, showBoard , getCoordinates, startTimer, clearTimer, resetTime, isSameCoord,
+        getRandomArrayItem, getElementFromRCDataAttribute, getAdjustedCoords, isValidCoords} from "./gridgames.js";
 const boards = [[9, 10],[15, 40], [20, 60]]
 const cellValueArray = [0,0,0,0] // 0/1 booleans - worked//flag/has mine/ mine clicked
 
@@ -88,7 +89,7 @@ function placeFlag(cellCoords){
 function placeMines(firstClickCoords){
     let number_of_mines = grid_size[1];
     for (let m = 0; m < number_of_mines; m++){
-        let randomCellCoords = getRandomArrayItem();
+        let randomCellCoords = getRandomArrayItem(gameCellArray);
         let element = getElementFromRCDataAttribute(randomCellCoords);
         if(!element.dataset.mine && !isSameCoord(firstClickCoords,randomCellCoords)){
             element.dataset.mine = "true";
@@ -137,9 +138,10 @@ function obtainAdjacentCells(cellCoords){
     let adjacentCells = [];
     let adjustmentArray = [[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, -1], [1, 0], [1, 1]];
     adjustmentArray.forEach(adjustment => {
-        let adjCell = [cellCoords[0] + adjustment[0], cellCoords[1] + adjustment[1]];
+        // let adjCell = [cellCoords[0] + adjustment[0], cellCoords[1] + adjustment[1]];
+        let adjCell = getAdjustedCoords(cellCoords, adjustment)
         
-        if(!isValidCoords(adjCell)) return;
+        if(!isValidCoords(gameCellArray,adjCell)) return;
 
         let nextCell = getElementFromRCDataAttribute(adjCell);
         if(nextCell.dataset.cleared === "true"){
@@ -183,22 +185,6 @@ function revealMines(){
 }
 
 // #region potentialforcommonjs
-function getRandomArrayItem(){
-    const row = Math.floor(Math.random() * gameCellArray.length);
-    const col =  Math.floor(Math.random() * gameCellArray[row].length);
-    return [row, col]
-}
-
-function getElementFromRCDataAttribute([row,col]){
-    //Using a row col array, obtain the html element base on the data attributes associated with the row and col.
-    return document.querySelector(`[data-row="${row}"][data-col="${col}"]`)
-}
-
-function isValidCoords(coords){
-    return gameCellArray[coords[0]] !== undefined && gameCellArray[coords[0],coords[1]] !== undefined;
-}
-
-
 
 function removeClickHandlers(){
     const handlers = document.querySelectorAll(`[data-row][data-col]`).forEach(element => {
